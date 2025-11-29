@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Adventure - Download Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: #1a1a2e;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        /* Pixel Background */
+        .pixel-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #0f3460 0%, #1a1a2e 100%);
+            z-index: -1;
+        }
+        
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 60px 70px, #fff, transparent),
+                radial-gradient(1px 1px at 50px 50px, #ddd, transparent),
+                radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+                radial-gradient(2px 2px at 90px 10px, #eee, transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: twinkle 3s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .pixel-clouds {
+            position: absolute;
+            width: 100%;
+            height: 150px;
+            top: 20%;
+        }
+        
+        .cloud {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 
+                0 0 0 4px rgba(255, 255, 255, 0.1),
+                20px 0 0 4px rgba(255, 255, 255, 0.1),
+                40px 0 0 4px rgba(255, 255, 255, 0.1),
+                10px -10px 0 4px rgba(255, 255, 255, 0.1),
+                30px -10px 0 4px rgba(255, 255, 255, 0.1);
+            animation: float 20s linear infinite;
+        }
+        
+        .cloud:nth-child(1) { top: 20px; animation-delay: 0s; }
+        .cloud:nth-child(2) { top: 80px; animation-delay: -7s; }
+        .cloud:nth-child(3) { top: 50px; animation-delay: -14s; }
+        
+        @keyframes float {
+            from { left: -100px; }
+            to { left: 100%; }
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            border: 8px solid #fff;
+            box-shadow: 
+                0 0 0 4px #1a1a2e,
+                0 0 0 8px #fff,
+                0 8px 0 8px #000;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .pixel-title {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            color: #ffd700;
+            text-shadow: 
+                4px 4px 0 #ff6b6b,
+                8px 8px 0 #000;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .subtitle {
+            font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+            color: #95e1d3;
+            margin: 10px 0;
+        }
+        
+        .header-characters {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .header-char {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            animation: headerBounce 1.5s ease-in-out infinite;
+        }
+        
+        .header-char:nth-child(1) { animation-delay: 0s; }
+        .header-char:nth-child(2) { animation-delay: 0.2s; }
+        .header-char:nth-child(3) { animation-delay: 0.4s; }
+        .header-char:nth-child(4) { animation-delay: 0.6s; }
+        .header-char:nth-child(5) { animation-delay: 0.8s; }
+        
+        @keyframes headerBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(-5deg); }
+            75% { transform: translateY(-15px) rotate(5deg); }
+        }
+        
+        .hero {
+            background: #4ecdc4;
+            box-shadow: 
+                0 0 0 4px #45b7af,
+                16px 0 0 4px #95e1d3,
+                -16px 0 0 4px #95e1d3;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #000;
+            border-radius: 50%;
+            top: 15px;
+            left: 12px;
+            box-shadow: 24px 0 0 #000;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 8px;
+            background: #fff;
+            bottom: 15px;
+            left: 20px;
+            border-radius: 4px;
+        }
+        
+        .knight {
+            background: #95a5a6;
+            box-shadow: 
+                0 -8px 0 4px #7f8c8d,
+                12px -8px 0 4px #7f8c8d,
+                12px 12px 0 4px #34495e,
+                -12px 12px 0 4px #34495e;
+        }
+        
+        .knight::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 4px;
+            background: #e74c3c;
+            top: 20px;
+            left: 22px;
+        }
+        
+        .knight::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 20px;
+            background: #ecf0f1;
+            top: 30px;
+            right: -4px;
+            box-shadow: 0 -8px 0 #bdc3c7;
+        }
+        
+        .wizard {
+            background: #9b59b6;
+            box-shadow: 
+                0 -12px 0 4px #8e44ad,
+                -8px -16px 0 4px #8e44ad,
+                8px -16px 0 4px #8e44ad,
+                -16px 8px 0 4px #9b59b6,
+                16px 8px 0 4px #9b59b6;
+        }
+        
+        .wizard::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #000;
+            border-radius: 50%;
+            top: 18px;
+            left: 10px;
+            box-shadow: 20px 0 0 #000;
+        }
+        
+        .wizard::after {
+            content: '✨';
+            position: absolute;
+            font-size: 16px;
+            top: -8px;
+            right: -12px;
+            animation: sparkle 1s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+        
+        .ninja {
+            background: #2c3e50;
+            box-shadow: 
+                0 -8px 0 4px #34495e,
+                12px 12px 0 4px #1a252f,
+                -12px 12px 0 4px #1a252f;
+        }
+        
+        .ninja::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 6px;
+            background: #95a5a6;
+            top: 18px;
+            left: 15px;
+        }
+        
+        .ninja::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+            top: 16px;
+            left: 10px;
+            box-shadow: 30px 0 0 #e74c3c;
+        }
+        
+        .princess {
+            background: #ff9ff3;
+            box-shadow: 
+                -8px -12px 0 4px #f368e0,
+                8px -12px 0 4px #f368e0,
+                0 0 0 4px #f368e0,
+                -12px 8px 0 4px #feca57,
+                12px 8px 0 4px #feca57;
+        }
+        
+        .princess::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+            top: 18px;
+            left: 12px;
+            box-shadow: 20px 0 0 #000;
+        }
+        
+        .princess::after {
+            content: '👑';
+            position: absolute;
+            font-size: 18px;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        /* Download Button */
+        .download-section {
+            text-align: center;
+            margin: 60px 0;
+        }
+        
+        .pixel-btn {
+            display: inline-block;
+            padding: 20px 40px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            color: #fff;
+            background: #ff6b6b;
+            border: 6px solid #fff;
+            box-shadow: 
+                0 0 0 3px #000,
+                0 6px 0 3px #000,
+                0 6px 0 9px #fff;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+        }
+        
+        .pixel-btn:hover {
+            transform: translateY(3px);
+            box-shadow: 
+                0 0 0 3px #000,
+                0 3px 0 3px #000,
+                0 3px 0 9px #fff;
+        }
+        
+        .pixel-btn:active {
+            transform: translateY(6px);
+            box-shadow: 
+                0 0 0 3px #000,
+                0 0 0 9px #fff;
+        }
+        
+        /* Description */
+        .description {
+            background: rgba(22, 33, 62, 0.9);
+            padding: 30px;
+            border: 6px solid #4ecdc4;
+            box-shadow: 
+                0 0 0 3px #000,
+                0 0 0 9px #4ecdc4,
+                0 8px 0 9px #000;
+            margin: 40px 0;
+        }
+        
+        .description h2 {
+            color: #ffd700;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 #000;
+        }
+        
+        .description p {
+            font-size: clamp(0.6rem, 1.5vw, 0.9rem);
+            line-height: 2;
+            color: #95e1d3;
+        }
+        
+        /* Screenshots */
+        .screenshots {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .screenshot-frame {
+            background: #2d3561;
+            border: 8px solid #fff;
+            box-shadow: 
+                0 0 0 4px #000,
+                0 0 0 8px #4ecdc4,
+                0 8px 0 8px #000;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .screenshot-frame::before {
+            content: 'SCREEN ' attr(data-num);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff6b6b;
+            padding: 5px 15px;
+            font-size: 0.6rem;
+            border: 3px solid #fff;
+            box-shadow: 0 0 0 2px #000;
+        }
+        
+        .screenshot-placeholder {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #0f3460 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #4ecdc4;
+            border: 4px dashed #4ecdc4;
+        }
+        
+        .screenshot-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Pixel Characters */
+        .pixel-mascots {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 40px 0;
+            gap: 20px;
+        }
+        
+        .mascot {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            animation: jump 2s ease-in-out infinite;
+        }
+        
+        .mascot:nth-child(2) { animation-delay: 0.3s; }
+        .mascot:nth-child(3) { animation-delay: 0.6s; }
+        .mascot:nth-child(4) { animation-delay: 0.9s; }
+        
+        @keyframes jump {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+        
+        .slime {
+            background: #95e1d3;
+            border-radius: 50% 50% 0 0;
+            box-shadow: 0 4px 0 4px #4ecdc4;
+        }
+        
+        .slime::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #000;
+            border-radius: 50%;
+            top: 15px;
+            left: 12px;
+            box-shadow: 24px 0 0 #000;
+        }
+        
+        .robot {
+            background: #c7c7c7;
+            box-shadow: 
+                0 0 0 4px #888,
+                12px 12px 0 4px #ffd700,
+                12px 28px 0 4px #ffd700;
+        }
+        
+        .robot::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ff6b6b;
+            top: 15px;
+            left: 10px;
+            box-shadow: 20px 0 0 #ff6b6b;
+        }
+        
+        .cat {
+            background: #ff9ff3;
+            box-shadow: 
+                -8px -8px 0 4px #ff9ff3,
+                16px -8px 0 4px #ff9ff3,
+                0 0 0 4px #f368e0;
+        }
+        
+        .cat::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #000;
+            border-radius: 50%;
+            top: 20px;
+            left: 12px;
+            box-shadow: 20px 0 0 #000;
+        }
+        
+        .ghost {
+            background: #fff;
+            border-radius: 50% 50% 0 0;
+            box-shadow: 
+                -8px 8px 0 4px #fff,
+                8px 8px 0 4px #fff,
+                0 16px 0 4px #e0e0e0;
+        }
+        
+        .ghost::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #000;
+            border-radius: 50%;
+            top: 15px;
+            left: 10px;
+            box-shadow: 20px 0 0 #000;
+        }
+        
+        /* Footer */
+        footer {
+            background: #16213e;
+            border: 6px solid #fff;
+            box-shadow: 0 0 0 3px #000;
+            padding: 30px;
+            margin-top: 60px;
+        }
+        
+        .health-bar, .mana-bar {
+            margin: 15px 0;
+        }
+        
+        .bar-label {
+            font-size: 0.7rem;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+        
+        .bar-container {
+            width: 100%;
+            height: 30px;
+            background: #000;
+            border: 4px solid #fff;
+            box-shadow: 0 0 0 2px #000;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            transition: width 2s ease;
+        }
+        
+        .health-fill {
+            background: linear-gradient(to right, #ff6b6b, #ff8787);
+            width: 85%;
+            animation: pulse 2s infinite;
+        }
+        
+        .mana-fill {
+            background: linear-gradient(to right, #4ecdc4, #95e1d3);
+            width: 60%;
+            animation: pulse 2s infinite 0.5s;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.6rem;
+            color: #95e1d3;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 20px 10px;
+            }
+            
+            .pixel-btn {
+                padding: 15px 25px;
+            }
+            
+            .description {
+                padding: 20px;
+            }
+            
+            .mascot {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="pixel-bg">
+        <div class="stars"></div>
+        <div class="pixel-clouds">
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- ========================================
+             📝 EDIT BAGIAN INI UNTUK MENGUBAH ISI
+             ======================================== -->
+        
+        <header>
+            <!-- Ganti judul game di sini -->
+            <h1 class="pixel-title" id="gameTitle">THE LOST LAB OF SIJA</h1>
+            
+            <!-- Ganti subtitle di sini -->
+            <p class="subtitle" id="gameSubtitle">Petualangan Edukatif di Dunia SIJA</p>
+            
+            <!-- Karakter-karakter pixel lucu -->
+            <div class="header-characters">
+                <div class="header-char hero"></div>
+                <div class="header-char knight"></div>
+                <div class="header-char wizard"></div>
+                <div class="header-char ninja"></div>
+                <div class="header-char princess"></div>
+            </div>
+        </header>
+        
+        <div class="download-section">
+            <!-- GANTI LINK GOOGLE DRIVE DI SINI -->
+            <a href="https://drive.google.com/file/d/GANTI_DENGAN_ID_FILE_ANDA/view" class="pixel-btn" target="_blank" id="downloadBtn">
+                ⬇ DOWNLOAD GAME ⬇
+            </a>
+        </div>
+        
+        <div class="description">
+            <!-- Ganti judul deskripsi di sini -->
+            <h2 id="descTitle">📖 TENTANG GAME</h2>
+            
+            <!-- Ganti deskripsi game di sini -->
+            <p id="descText">
+                The Lost Lab of SIJA adalah game edukasi bertema petualangan (adventure) top-down pixel art yang mengajak pemain menjelajahi dunia pembelajaran di jurusan Sistem Informasi Jaringan dan Aplikasi (SIJA). Game ini dirancang khusus untuk mengenalkan lingkungan, ruang praktik, dan materi dasar SIJA kepada pemain — baik yang awam maupun yang sudah memahami dunia IT.
+                <br><br>
+                Dengan grafis pixel art, gameplay yang ringan, dan elemen edukatif yang disisipkan secara natural, The Lost Lab of SIJA bertujuan membuat orang awam lebih mengenal dan tertarik pada jurusan SIJA melalui pengalaman bermain yang seru, interaktif, dan penuh eksplorasi.
+            </p>
+        </div>
+        
+        <div class="pixel-mascots">
+            <div class="mascot slime"></div>
+            <div class="mascot robot"></div>
+            <div class="mascot cat"></div>
+            <div class="mascot ghost"></div>
+        </div>
+        
+        <div class="screenshots">
+            <!-- Feature Box 1 -->
+            <div class="screenshot-frame" data-num="01">
+                <div class="screenshot-placeholder" id="screen1" style="flex-direction: column; padding: 20px; gap: 10px;">
+                    <div style="font-size: 1.2rem; margin-bottom: 10px;">🎮 GAMEPLAY</div>
+                    <div style="font-size: 0.7rem; line-height: 1.8;">
+                        • Top-Down Adventure<br>
+                        • Eksplorasi Ruangan Lab<br>
+                        • Puzzle & Tantangan<br>
+                        • Pembelajaran Interaktif
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature Box 2 -->
+            <div class="screenshot-frame" data-num="02">
+                <div class="screenshot-placeholder" id="screen2" style="flex-direction: column; padding: 20px; gap: 10px;">
+                    <div style="font-size: 1.2rem; margin-bottom: 10px;">💻 MATERI SIJA</div>
+                    <div style="font-size: 0.7rem; line-height: 1.8;">
+                        • Jaringan Komputer<br>
+                        • Pemrograman Dasar<br>
+                        • Database & Web<br>
+                        • IT Infrastructure
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature Box 3 -->
+            <div class="screenshot-frame" data-num="03">
+                <div class="screenshot-placeholder" id="screen3" style="flex-direction: column; padding: 20px; gap: 10px;">
+                    <div style="font-size: 1.2rem; margin-bottom: 10px;">🎯 FITUR</div>
+                    <div style="font-size: 0.7rem; line-height: 1.8;">
+                        • Grafis Pixel Art<br>
+                        • Cerita Menarik<br>
+                        • Ringan & Responsif<br>
+                        • Gratis & Edukatif
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="health-bar">
+                <div class="bar-label">❤️ HEALTH</div>
+                <div class="bar-container">
+                    <div class="bar-fill health-fill"></div>
+                </div>
+            </div>
+            <div class="mana-bar">
+                <div class="bar-label">✨ MANA</div>
+                <div class="bar-container">
+                    <div class="bar-fill mana-fill"></div>
+                </div>
+            </div>
+            
+            <!-- Ganti teks footer di sini -->
+            <div class="footer-text" id="footerText">
+                © 2025 THE LOST LAB OF SIJA | Game Edukasi SIJA
+            </div>
+        </footer>
+    </div>
+    
+    <!-- ========================================
+         💡 ATAU EDIT MENGGUNAKAN JAVASCRIPT
+         (Hapus script ini jika tidak dipakai)
+         ======================================== -->
+    <script>
+        // CARA MUDAH: Edit teks langsung di sini
+        document.getElementById('gameTitle').textContent = 'THE LOST LAB OF SIJA';
+        document.getElementById('gameSubtitle').textContent = 'Petualangan Edukatif di Dunia SIJA';
+        document.getElementById('descTitle').textContent = '📖 TENTANG GAME';
+        document.getElementById('descText').innerHTML = 'The Lost Lab of SIJA adalah game edukasi bertema petualangan (adventure) top-down pixel art yang mengajak pemain menjelajahi dunia pembelajaran di jurusan Sistem Informasi Jaringan dan Aplikasi (SIJA). Game ini dirancang khusus untuk mengenalkan lingkungan, ruang praktik, dan materi dasar SIJA kepada pemain — baik yang awam maupun yang sudah memahami dunia IT.<br><br>Dengan grafis pixel art, gameplay yang ringan, dan elemen edukatif yang disisipkan secara natural, The Lost Lab of SIJA bertujuan membuat orang awam lebih mengenal dan tertarik pada jurusan SIJA melalui pengalaman bermain yang seru, interaktif, dan penuh eksplorasi.';
+        document.getElementById('footerText').textContent = '© 2025 THE LOST LAB OF SIJA | Game Edukasi SIJA';
+        
+        // Untuk mengganti link download:
+        document.getElementById('downloadBtn').href = 'https://drive.google.com/file/d/GANTI_DENGAN_ID_FILE_ANDA/view';
+        
+        // Untuk mengganti screenshot dengan gambar asli (opsional):
+        // document.getElementById('screen1').innerHTML = '<img src="https://link-ke-gambar1.jpg" alt="Screenshot 1">';
+        // document.getElementById('screen2').innerHTML = '<img src="https://link-ke-gambar2.jpg" alt="Screenshot 2">';
+        // document.getElementById('screen3').innerHTML = '<img src="https://link-ke-gambar3.jpg" alt="Screenshot 3">';
+    </script>
+</body>
+</html>
